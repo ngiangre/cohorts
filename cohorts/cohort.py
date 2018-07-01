@@ -277,7 +277,7 @@ class Cohort(object):
 		#subset to have proteins found in atleast sufficient_reps 
 		#per sample for all samples
 		if quant_least_reps_per_samps:
-			prots = self.proteins_in_n_replicates_per_samples(df,n_reps=1)
+			prots = self.proteins_in_n_replicates_per_samples(df,n_reps=n_reps)
 			df = df.loc[prots]
 
 		#subset to have proteins found in atleast n_reps 
