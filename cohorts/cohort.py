@@ -1236,6 +1236,29 @@ class Cohort(object):
 
 		return df_samples
 
+class IntegratedCohort(object):
+	"""
+	Integrated patient cohorts object for shared patient clinical and proteomics data
+
+	Dataframes, variables, and functions facilitating the processing, analysis, and integration of the integrated cohort data.
+	
+	Parameters
+	----------
+	cohort_objs
+		dictionary of individual cohort objects to integrate through shared clinical and proteomic data
+
+	Examples
+	--------
+
+	"""
+
+	def __init__(self,cohort_objs={}):
+
+		self.cohort_objs = cohort_objs
+
+	def sayHello(self):
+
+		return "Hello!"
 
 if __name__=="__main__":
 	"""
