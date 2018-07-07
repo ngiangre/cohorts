@@ -8,3 +8,4 @@ This packages allows handling and structuring datasets from patient cohorts.
 '''
 
 from .cohort import Cohort
+from .cohort import IntegratedCohort

@@ -1264,4 +1264,5 @@ if __name__=="__main__":
 	"""
 	Execute
 	"""
-	c = cohorts.Cohort('cumc')
+	name =  'cumc'
+	c = cohorts.Cohort(name)
