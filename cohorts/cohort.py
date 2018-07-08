@@ -1255,10 +1255,44 @@ class IntegratedCohort(object):
 	def __init__(self,cohort_objs={}):
 
 		self.cohort_objs = cohort_objs
+		self.response = None
+		self.df = None
+		self.df_groups = None
 
 	def sayHello(self):
 
 		return "Hello!"
+
+	def integrate_cohorts(self,treat_name="PGD",ref_name="NL",dataset_type='samples_hq',groups_type='sample_groups'):
+		'''
+		For created dataset integrating cohorts data
+		
+		Uses treat and ref attributes of each object to integrate the sample groups. Uses treat_name and ref_name to rename the treat and ref groups (in case in cohorts the treat and ref groups are named differently but should be integrated)
+		
+		Can set the object attribute type to use for joining e.g. the samples or replicates dataset
+		
+		Returns:
+		--------
+		
+		integrated_samples_dataset:
+			common proteins x all cohort samples
+		integrated_sample_groups
+			groups x all cohort samples
+		response
+			response_group x samples
+		'''
+		dfs = {}
+		df_groups = {}
+		for cohort,obj in self.cohort_objs.items():
+			dfs[cohort] = getattr(obj,dataset_type)
+			df = getattr(obj,groups_type).loc[[obj.ref[0],obj.treat[0]]]
+			df.index = [ref_name,treat_name]
+			df_groups[cohort] = df
+
+		self.df = multi_df_join(dfs).dropna()
+		self.df_groups = multi_df_join(df_groups).dropna()
+		self.response = self.df_groups.loc[treat_name]
+
 
 if __name__=="__main__":
 	"""
