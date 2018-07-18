@@ -1255,7 +1255,6 @@ class IntegratedCohort(object):
 	def __init__(self,cohort_objs={}):
 
 		self.cohort_objs = cohort_objs
-		self.response = None
 		self.df = None
 		self.df_groups = None
 
@@ -1285,13 +1284,11 @@ class IntegratedCohort(object):
 		df_groups = {}
 		for cohort,obj in self.cohort_objs.items():
 			dfs[cohort] = getattr(obj,dataset_type)
-			df = getattr(obj,groups_type).loc[[obj.ref[0],obj.treat[0]]]
-			df.index = [ref_name,treat_name]
+			df = getattr(obj,groups_type)
 			df_groups[cohort] = df
 
 		self.df = multi_df_join(dfs).dropna()
 		self.df_groups = multi_df_join(df_groups).dropna()
-		self.response = self.df_groups.loc[treat_name]
 
 
 if __name__=="__main__":
