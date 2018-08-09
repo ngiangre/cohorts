@@ -122,6 +122,7 @@ class Cohort(object):
 		Setting the replicates file string.
 		Combination of the file directory string and the replicates file string
 
+		A csv file is needed!
 		Parameters
 		----------
 		None
@@ -135,6 +136,8 @@ class Cohort(object):
 		Setting the replicate_groups string
 		Combination of the path string and the replicates file string
 
+		A csv file is needed!
+		
 		Parameters
 		----------
 		None
