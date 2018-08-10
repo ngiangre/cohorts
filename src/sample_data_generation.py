@@ -31,7 +31,7 @@ mat_num = len(proteins) * len(replicates)
 protein_values = np.random.exponential(2,mat_num)
 df_replicates = pd.DataFrame(protein_values.reshape(len(proteins),len(replicates)),
                                 index = proteins, columns = replicates)
-df_replicates.to_csv(out_dir+"df_replicates.csv")
+df_replicates.to_csv(out_dir+"df_replicates.tsv",sep="\t")
 
 #Make df_sample_groups dataframe
 trt_status = np.repeat([1,0],np.floor(n_samples/2).astype(int))
@@ -41,6 +41,6 @@ tmp = np.repeat(1,n_cov)
 cov_status = np.pad(tmp,(0,n_samples-n_cov),mode="constant")
 df_sample_groups = pd.DataFrame( [ trt_status, ref_status,cov_status ],
                 columns = samples,index = ["trt","ref","cov"])
-df_sample_groups.to_csv(out_dir+"df_sample_groups.csv")
+df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
 

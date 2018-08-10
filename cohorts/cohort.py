@@ -1,4 +1,4 @@
-from .utils import *
+from utils import *
 import os
 import numpy as np
 import pandas as pd
@@ -25,12 +25,13 @@ class Cohort(object):
 		name of the replicates dataframe file
 
 		A proteins x B replicates
-		tab delimited
+		comma (*.csv) or tab (*.tsv) delimited
 
 		replicate = "SampleName" + "_Rep[0-9]"
 
 	sample_groups_file: str
 		name of the sample group file
+		comma (*.csv) or tab (*.tsv) delimited
 
 		N groups x M samples
 
@@ -165,7 +166,14 @@ class Cohort(object):
 		None
 
 		"""		
-		self.raw_replicates = pd.read_csv(self.replicates_file,delimiter="\t",index_col=0)
+
+		#checking if tab separated (tsv) or comma separated (csv) format
+		splt = self.replicates_file.split(".")
+		format = splt[len(splt)-1][0]
+		if format is 'c':
+			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter=",",index_col=0)
+		else:
+			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter="\t",index_col=0)
 
 	def set_replicates(self):
 		"""
@@ -519,10 +527,14 @@ class Cohort(object):
 			file to read sample groups data. Defaults to parameters from cohorts instantiation
 		"""		
 
-		#if file is not None:
+		#checking if tab separated (tsv) or comma separated (csv) format
+		splt = self.sample_groups_file.split(".")
+		format = splt[len(splt)-1][0]
+		if format is 'c':
+			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter=",",index_col=0)
+		else:
+			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter="\t",index_col=0)
 			
-		self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter="\t",index_col=0)
-
 	def set_df_replicate_groups(self):
 		"""
 		Aggregating df_replicate_groups to derive sample group 
