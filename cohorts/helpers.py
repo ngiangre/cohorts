@@ -1,4 +1,4 @@
-from cohort import *
+from .cohort import *
 
 def make_cohorts_dict(names,
 					file_dirs,
