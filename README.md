@@ -15,20 +15,30 @@ This python package aims to provide standardization in creating a data structure
 
 ## Installation
 
-git clone ...
-cd ...
+```
+git clone https://github.com/ngiangre/cohorts.git
+cd cohorts/
 pip install setup.py
-...
+```
 
-### Prerequisites
+### Python module dependencies
 
-python 3
+os
+numpy
+pandas
+itertools
+scipy
+sklearn
+functools
+seaborn
 
 ## Contribute
 
 Please do! Both cohort data structure and functionality features are needed. 
 
+To contribute, please subnmit a pull request.
+
 ## License
 
-
+This software is released under the MIT license, which can be found in LICENSE in the root directory of this repository.
 
