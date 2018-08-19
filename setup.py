@@ -7,4 +7,14 @@ setup(name='cohorts',
       author_email='npg2108@cumc.columbia.edu',
       license='MIT',
       packages=['cohorts'],
+      install_requires=[
+      		'os',
+      		'numpy',
+      		'pandas',
+      		'logging',
+      		'functools',
+      		'scipy',
+      		'sklearn',
+      		'itertools'
+      	]
       zip_safe=False)
