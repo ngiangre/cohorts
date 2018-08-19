@@ -572,7 +572,7 @@ class Cohort(object):
 	def set_groups(self):
 		"""
 		Setting groups from sample groups dataframe
-
+		
 		Parameters
 		----------
 		None
@@ -584,14 +584,14 @@ class Cohort(object):
 	def set_ref(self,ref='NL'):
 		"""
 		Setting reference group (hard coded to be normal patients or 'NL', but can change this after declaration)
-
+		
 		Parameters
 		----------
-
+		
 		ref: string
 			Reference group name
-
-
+		
+		
 		"""
 
 		#get ref index
@@ -609,10 +609,10 @@ class Cohort(object):
 	def set_treat(self,trt='PGD'):
 		"""
 		Setting treatment group
-
+		
 		Parameters
 		----------
-
+		
 		trt: string
 			Treatment group name
 		"""
@@ -740,67 +740,67 @@ class Cohort(object):
 		return tab
 
 	def get_tidy_data(attribute=""):
-	"""
-	Returns tidy version of available attributes
-	
-	Parameters
-	----------
-	
-	attribute: str
-		one of ['sample_groups', 'replicate_groups', 'raw_replicates', 'raw_samples','replicates_hq','samples_hq']
-	
-	Output:
-	-------
-	
-	tidy version of attribute
-	
-	"""
-	
-	avail_attributes = ['sample_groups', 'replicate_groups', 'raw_replicates', 'raw_samples','replicates_hq','samples_hq']
+		"""
+		Returns tidy version of available attributes
+		
+		Parameters
+		----------
+		
+		attribute: str
+			one of ['sample_groups', 'replicate_groups', 'raw_replicates', 'raw_samples','replicates_hq','samples_hq']
+		
+		Output:
+		-------
+		
+		tidy version of attribute
+		
+		"""
+		
+		avail_attributes = ['sample_groups', 'replicate_groups', 'raw_replicates', 'raw_samples','replicates_hq','samples_hq']
 
-	if attribute not in avail_attributes:
-		raise Exception("Not one of:\n{}".format(avail_attributes))
-	elif attribute == 'sample_groups':
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Group' })
-			.melt(id_vars='Group',var_name='Sample')
-			.query('value==1')
-			.drop(['value'],axis=1)
-			)
-	elif attribute == 'replicate_groups':
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Group' })
-			.melt(id_vars='Group',var_name='Replicate')
-			.query('value==1')
-			.drop(['value'],axis=1)
-			)
-	elif attribute == 'raw_replicates':
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Protein' })
-			.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
-			)
-	elif attribute == 'replicates_hq' and getattr(obj,attribute) is not None:
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Protein' })
-			.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
-			)
-	elif attribute == 'raw_samples':
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Protein' })
-			.melt(id_vars='Protein',var_name='Sample',value_name='Value')
-			)
-	elif attribute == 'samples_hq' and getattr(obj,attribute) is not None:
-		tidy = (getattr(obj,attribute)
-			.reset_index()
-			.rename(columns={ 'index' : 'Protein' })
-			.melt(id_vars='Protein',var_name='Sample',value_name='Value')
-			)
-	return tidy
+		if attribute not in avail_attributes:
+			raise Exception("Not one of:\n{}".format(avail_attributes))
+		elif attribute == 'sample_groups':
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Group' })
+				.melt(id_vars='Group',var_name='Sample')
+				.query('value==1')
+				.drop(['value'],axis=1)
+				)
+		elif attribute == 'replicate_groups':
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Group' })
+				.melt(id_vars='Group',var_name='Replicate')
+				.query('value==1')
+				.drop(['value'],axis=1)
+				)
+		elif attribute == 'raw_replicates':
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Protein' })
+				.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
+				)
+		elif attribute == 'replicates_hq' and getattr(obj,attribute) is not None:
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Protein' })
+				.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
+				)
+		elif attribute == 'raw_samples':
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Protein' })
+				.melt(id_vars='Protein',var_name='Sample',value_name='Value')
+				)
+		elif attribute == 'samples_hq' and getattr(obj,attribute) is not None:
+			tidy = (getattr(obj,attribute)
+				.reset_index()
+				.rename(columns={ 'index' : 'Protein' })
+				.melt(id_vars='Protein',var_name='Sample',value_name='Value')
+				)
+		return tidy
 
 
 	#ANALYSIS FUNCTIONS
@@ -892,7 +892,7 @@ class Cohort(object):
 		self.data['mfe'] = { 'main' : dictionary, 'helper' : helper_dictionary } 
 
 	def make_protein_substraction(self,dictionary=None):
-		'''
+		"""
 		Helper function only for manual_feature_extraction method to do set operations on protein results
 
 		Right now supports difference of proteins
@@ -905,7 +905,8 @@ class Cohort(object):
 		Output
 		------
 		Dictionary of protein array length band array from difference ofv manually extracted features between ref and treat groups
-		'''
+		"""
+
 		#declare dictionary from manual feature extraction
 		mfe = dictionary
 
@@ -1031,7 +1032,7 @@ class Cohort(object):
 		return df
 
 	def get_sub_df(self,df,df_groups,grp):
-		'''
+		"""
 		Helper function in class to get patient-subset dataframe.
 
 		Subset larger dataframe by reference and treatment groups
@@ -1050,7 +1051,7 @@ class Cohort(object):
 		Output
 		------
 		subsetted dataset
-		'''
+		"""
 
 		#get indices of replicates/samples in groups
 		inds = np.where(df_groups.loc[grp] == 1)

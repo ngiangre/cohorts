@@ -16,5 +16,7 @@ setup(name='cohorts',
       		'scipy',
       		'sklearn',
       		'itertools'
-      	]
+      	],
+		test_suite='nose.collector',
+		tests_require=['nose'],
       zip_safe=False)

@@ -1,8 +1,6 @@
 """
 Testing cohorts package using sample data
 """
-import pkg_resources
-pkg_resources.require("cohorts==0.2a0")
 import cohorts
 
 #setting input parameters to make cohorts

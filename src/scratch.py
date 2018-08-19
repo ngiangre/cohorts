@@ -2,8 +2,6 @@
 For trying out new features
 """
 
-import pkg_resources
-pkg_resources.require("cohorts==0.2a0")
 import cohorts
 
 #setting input parameters to make cohorts
