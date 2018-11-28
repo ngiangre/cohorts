@@ -127,20 +127,20 @@ def make_comparable(dfs,rank=True):
 	return dfs_new 
 
 def multiple_set_intersection(*sets):
-    """
-    Return multiple set intersection.
-    from https://stackoverflow.com/questions/2541752/best-way-to-find-the-intersection-of-multiple-sets
-    """
-    try:
-        return set.intersection(*sets)
-    except TypeError: # this is Python < 2.6 or no arguments
-        pass
+	"""
+	Return multiple set intersection.
+	from https://stackoverflow.com/questions/2541752/best-way-to-find-the-intersection-of-multiple-sets
+	"""
+	try:
+		return set.intersection(*sets)
+	except TypeError: # this is Python < 2.6 or no arguments
+		pass
 
-    try: a_set= sets[0]
-    except IndexError: # no arguments
-        return set() # return empty set
+	try: a_set= sets[0]
+	except IndexError: # no arguments
+		return set() # return empty set
 
-    return reduce(a_set.intersection, sets[1:])
+	return reduce(a_set.intersection, sets[1:])
 
 def quantileNormalize(df_input):
 	"""
@@ -243,5 +243,30 @@ def treat_ref_color_map(df,labels,groups,palette='hls'):
 	network_colors.index = network_colors.index.astype('str')
 
 	return network_colors
+
+# For standardizing the dataset, in particular the clinical variables
+def discretize(X):
+	var = X.name
+	tmp = X.copy()
+	var_dict = {}
+	dict_lst = [{i : t} for i,t in enumerate(tmp.unique())]
+	for i,d in enumerate(dict_lst):
+		var_dict[d[i]] = i
+	return tmp.map(var_dict)
+def standardize(X):
+	X = X.astype(float)
+	numerator = ( X - min(X) )
+	denominator = ( max(X) - min(X) )
+	return numerator / denominator
+def non_standardize_func(X):
+	try:
+		return X.astype(float)
+	except:
+		return discretize(X)
+def standardize_func(X):
+	try:
+		return standardize(X.astype(float))
+	except:
+		return standardize(discretize(X))
 
 
