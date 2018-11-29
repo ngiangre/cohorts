@@ -244,8 +244,21 @@ def treat_ref_color_map(df,labels,groups,palette='hls'):
 
 	return network_colors
 
-# For standardizing the dataset, in particular the clinical variables
+## For standardizing datasets, in particular the clinical variables ##
 def discretize(X):
+	'''
+	Helper function to convert objects/strings in pandas series into integer values.
+
+	Parameters
+	----------
+	X
+		Pandas series 
+
+	Output
+	------
+		Pandas series of dtype int
+
+	'''
 	var = X.name
 	tmp = X.copy()
 	var_dict = {}
@@ -253,20 +266,66 @@ def discretize(X):
 	for i,d in enumerate(dict_lst):
 		var_dict[d[i]] = i
 	return tmp.map(var_dict)
+
 def standardize(X):
+	'''
+	Helper function to standardize Pandas series (dtype int or float) to iwthin the [0,1] range.
+
+	Parameters
+	----------
+	X
+		Pandas series 
+
+	Output
+	------
+		Pandas series of dtype float within [0,1] range
+
+	'''
 	X = X.astype(float)
 	numerator = ( X - min(X) )
 	denominator = ( max(X) - min(X) )
 	return numerator / denominator
+
 def non_standardize_func(X):
+	'''
+	Helper function that converts Pandas series to dtype float or, in the case of objects/strings, int.
+
+	Parameters
+	----------
+	X
+		Pandas series 
+
+	Output
+	------
+	X
+		Pandas series of dtype float or int
+
+	'''
 	try:
 		return X.astype(float)
 	except:
 		return discretize(X)
+
 def standardize_func(X):
+	'''
+	Helper function that converts Pandas series to dtype float or, in the case of objects/strings, int.
+	The range of the series is within [0,1].
+
+	Parameters
+	----------
+	X
+		Pandas dseries
+
+	Output
+	------
+	X
+		Pandas series of dtype float or int within range [0,1]
+
+	'''
 	try:
 		return standardize(X.astype(float))
 	except:
 		return standardize(discretize(X))
 
+####
 
