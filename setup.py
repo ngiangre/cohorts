@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from io import open
+from os import path
 
 here = path.abspath(path.dirname(__file__))
 
