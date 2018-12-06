@@ -29,7 +29,7 @@ setup(name='cohorts',
       		'pandas',
       		'logging',
       		'scipy',
-      		'sklearn'
+      		'scikit-learn'
       	],
 		test_suite='nose.collector',
 		tests_require=['nose'],
