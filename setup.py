@@ -25,14 +25,11 @@ setup(name='cohorts',
       license='MIT',
       packages=find_packages(exclude=['contrib', 'docs', 'tests']),
       install_requires=[
-      		'os',
       		'numpy',
       		'pandas',
       		'logging',
-      		'functools',
       		'scipy',
-      		'sklearn',
-      		'itertools'
+      		'sklearn'
       	],
 		test_suite='nose.collector',
 		tests_require=['nose'],
