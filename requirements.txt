@@ -1,0 +1,9 @@
+cohorts==0.2a0
+logging==0.4.9.6
+numpy==1.15.4
+pandas==0.23.4
+python-dateutil==2.7.5
+pytz==2018.7
+scikit-learn==0.20.1
+scipy==1.2.0rc2
+six==1.11.0
