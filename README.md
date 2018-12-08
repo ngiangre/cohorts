@@ -21,16 +21,25 @@ cd cohorts/
 pip install setup.py
 ```
 
+## Testing in a `pyenv`
+
+```
+cd pkg_dev/
+virtualenv cohorts -p python3
+cd cohorts
+source bin/activate
+git clone https://github.com/ngiangre/cohorts.git
+cd cohorts/
+python setup.py install
+```
+
 ### Python module dependencies
 
-os
 numpy
 pandas
-itertools
 scipy
-sklearn
-functools
-seaborn
+scikit-learn
+
 
 ## Contribute
 
