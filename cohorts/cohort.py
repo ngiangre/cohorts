@@ -456,7 +456,7 @@ class Cohort(object):
 
 		#only do log (other than log1p) transformations if values are
 		#all nonzero
-		if len(np.where(data.as_matrix().ravel()==0)[0])>0:
+		if np.sum((data==0).values)>0:
 			add_small = True
 			print('There are zero values in the sample dataframe, a small number epsilon must be added to the protein values when there are zero values. Adding small epsilon...')
 
