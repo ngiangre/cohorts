@@ -172,9 +172,9 @@ class Cohort(object):
 		splt = self.replicates_file.split(".")
 		format = splt[len(splt)-1][0]
 		if format is 'c':
-			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter=",",index_col=0)
+			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter=",",index_col=0).sort_index(axis=0).sort_index(axis=1)
 		else:
-			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter="\t",index_col=0)
+			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter="\t",index_col=0).sort_index(axis=0).sort_index(axis=1)
 
 	def set_replicates(self):
 		"""
@@ -532,9 +532,9 @@ class Cohort(object):
 		splt = self.sample_groups_file.split(".")
 		format = splt[len(splt)-1][0]
 		if format is 'c':
-			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter=",",index_col=0)
+			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter=",",index_col=0).sort_index(axis=0).sort_index(axis=1)
 		else:
-			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter="\t",index_col=0)
+			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter="\t",index_col=0).sort_index(axis=0).sort_index(axis=1)
 			
 	def set_df_replicate_groups(self):
 		"""
