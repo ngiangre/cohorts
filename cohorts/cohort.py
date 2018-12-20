@@ -1304,13 +1304,13 @@ class Cohort(object):
 		for sample in dictionary.keys():
 
 			#dataframe of replicates for a given sample
-			holder = df_replicates[dictionary[sample]]
+			holder = df_replicates.loc[:,dictionary[sample]]
 
 			#determine sample protein value from replicate values
 			df = holder.agg(func=agg,axis=1)
 
 			#put in df to larger df_samples
-			df_samples[sample] = df
+			df_samples.loc[:,sample] = df
 
 		#add index-protein accessions
 		df_samples.index = acc
