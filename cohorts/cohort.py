@@ -67,15 +67,19 @@ class Cohort(object):
 
 
 	def __init__(self,cohort='cumc',
-		replicates_file=None,sample_groups_file=None,
+		replicates_file=None,
+		samples_file=None,
+		sample_groups_file=None,
 		uniprot_file=None,
-		file_dir="",data_dir="../../data/"):
+		file_dir="",
+		data_dir="../../data/"):
 
 		self.cwd = os.getcwd()
 		self.data_dir = data_dir
 		self.file_dir = file_dir
 		self.cohort = cohort
 		self.replicates_file = replicates_file
+		self.samples_file = samples_file
 		self.sample_groups_file = sample_groups_file
 		self.uniprot_file = uniprot_file
 		self.raw_samples = None
@@ -991,23 +995,16 @@ class Cohort(object):
 			test = hyp[0]
 
 			#for each protein
-			for j in range(0,df1.shape[0]):
+			for protein in df1.index:
 
 				#get protein location in dataframes
-				firstloc = df1.iloc[j]
-				secondloc = df2.iloc[j]
+				firstloc = df1.loc[protein]
+				secondloc = df2.loc[protein]
 
 				#make sure the arrays are filled with floats
 				a = firstloc.values.astype(float)
 				b = secondloc.values.astype(float)
 
-				#make sure the name of the protein is the same in each dataframe
-				if firstloc.name == secondloc.name:
-
-					#set protein name
-					protein = firstloc.name
-				else:
-					break
 				#set statistic from test
 				stat = hyp[1](a,b)[0]
 
@@ -1078,7 +1075,7 @@ class Cohort(object):
 		subsetted uniprot database
 		"""
 
-		return self.uniprot_annot(df,status=status).index.ravel()
+		return self.uniprot_annot(df,status=status).index.values
 
 	def proteins_in_n_replicates_per_samples(self,df,n_reps=1):
 		"""
@@ -1100,7 +1097,7 @@ class Cohort(object):
 		atleast1_reps = []
 		for samp in samp_rep_dict.keys():
 			reps = samp_rep_dict[samp]
-			sub = df.T.loc[reps]
+			sub = df.loc[:,reps]
 			mask = sub.apply(lambda x : x > 0,axis=1)
 			#proteins quantified in more than 1 replicates of a sample
 			prot_bool = mask.sum(axis=0) > n_reps
