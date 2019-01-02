@@ -72,7 +72,10 @@ class Cohort(object):
 		sample_groups_file=None,
 		uniprot_file=None,
 		file_dir="",
-		data_dir="../../data/"):
+		data_dir="../../data/",
+		marker_type="protein",
+		reference=None,
+		treatment=None):
 
 		self.cwd = os.getcwd()
 		self.data_dir = data_dir
@@ -82,6 +85,7 @@ class Cohort(object):
 		self.samples_file = samples_file
 		self.sample_groups_file = sample_groups_file
 		self.uniprot_file = uniprot_file
+		self.marker_type = marker_type
 		self.raw_samples = None
 		self.raw_replicates = None
 		self.replicates_hq = None
@@ -91,29 +95,27 @@ class Cohort(object):
 		self.sample_replicate_dictionary = None
 		self.samples = None
 		self.replicates = None
-		self.proteins = None
+		self.markers = None
 		self.replicate_groups = None
 		self.sample_groups = None
 		self.tidy_replicate_groups = None
 		self.tidy_sample_groups = None
 		self.groups = None
-		self.ref = None
-		self.treat = None
+		self.ref = reference
+		self.treat = treatment
 		self.set_replicates_file()
 		self.set_sample_groups_file()
 		self.set_raw_replicates()
 		self.set_replicates()
+		self.set_markers()
 		self.set_sample_replicate_dictionary()
 		self.set_samples()
 		self.set_sample_groups()
 		self.set_replicate_groups()
 		self.set_raw_samples()
-		self.set_tidy_sample_groups()
-		self.set_tidy_replicate_groups()
-		self.set_proteins()
 		self.set_groups()
-		self.set_ref()
-		self.set_treat()
+		self.set_tidy_replicate_groups()
+		self.set_tidy_sample_groups()
 
 		#extra parameters/data objects that can be 
 		#attributed to an object instance
@@ -179,6 +181,9 @@ class Cohort(object):
 			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter=",",index_col=0).sort_index(axis=0).sort_index(axis=1)
 		else:
 			self.raw_replicates = pd.read_csv(self.replicates_file,delimiter="\t",index_col=0).sort_index(axis=0).sort_index(axis=1)
+		
+		self.raw_replicates.index.name = self.marker_type
+		self.raw_replicates.columns.name = "replicate"
 
 	def set_replicates(self):
 		"""
@@ -193,6 +198,20 @@ class Cohort(object):
 		"""
 
 		self.replicates = self.raw_replicates.columns.tolist()
+
+	def set_markers(self):
+		"""
+		Setting marker names 
+
+		Depends on : raw_replicates
+
+		Parameters
+		----------
+		None
+
+		"""
+
+		self.markers = self.raw_replicates.index.tolist()
 
 	def set_sample_replicate_dictionary(self):
 		"""
@@ -288,7 +307,7 @@ class Cohort(object):
 		"""
 
 		#get raw data
-		df = self.raw_replicates.fillna(0)
+		df = self.raw_replicates.copy().fillna(0)
 
 		#subset to have proteins found in atleast sufficient_reps 
 		#per sample for all samples
@@ -509,19 +528,6 @@ class Cohort(object):
 		"""
 		self.samples = [x for x in self.sample_replicate_dictionary.keys()]
 
-	def set_proteins(self):
-		"""
-		Setting protein ids from raw dataframe
-
-		Depends on raw_replicates
-
-		Parameters
-		----------
-		None
-
-		"""
-		self.proteins = self.raw_replicates.index.values
-
 	def set_sample_groups(self,file=None):
 		"""
 		Setting group membership of samples dataframe where 1 indicates membership and 0 no membership. 
@@ -540,6 +546,9 @@ class Cohort(object):
 		else:
 			self.sample_groups = pd.read_csv(self.sample_groups_file,delimiter="\t",index_col=0).sort_index(axis=0).sort_index(axis=1)
 			
+		self.sample_groups.columns.name = "sample"
+		self.sample_groups.index.name = "group"
+
 	def set_df_replicate_groups(self):
 		"""
 		Aggregating df_replicate_groups to derive sample group 
@@ -558,7 +567,12 @@ class Cohort(object):
 			for r in reps:
 				mats[r] = single
 
-		return pd.DataFrame.from_dict(mats)
+		df = pd.DataFrame.from_dict(mats)
+
+		df.columns.name = "replicate"
+		df.index.name = "group"
+
+		return df
 
 	def set_replicate_groups(self,file=None):
 		"""
@@ -587,7 +601,7 @@ class Cohort(object):
  
 	def set_ref(self,ref='NL'):
 		"""
-		Setting reference group (hard coded to be normal patients or 'NL', but can change this after declaration)
+		Setting reference group 
 		
 		Parameters
 		----------
@@ -598,17 +612,10 @@ class Cohort(object):
 		
 		"""
 
-		#get ref index
-		ind = np.where(self.groups==ref)[0]
+		#set new reference variable if it's in the groups already. If not, just ignore it. 
+		if np.any(self.groups==ref):
 
-		#make sure there's only one trt name in all groups
-		if len(ind)==1:
-
-			self.ref = self.groups[ind]
-
-		else:
-
-			self.ref = np.asarray(self.groups[0],dtype='object')
+			self.ref = ref
 
 	def set_treat(self,trt='PGD'):
 		"""
@@ -621,16 +628,10 @@ class Cohort(object):
 			Treatment group name
 		"""
 
-		#get trt index
-		ind = np.where(self.groups==trt)[0]
+		#set new reference variable if it's in the groups already. If not, just ignore it. 
+		if np.any(self.groups==trt):
 
-		#make sure there's only one trt name in all groups
-		if len(ind)==1:
-
-			self.treat = self.groups[ind]
-		else:
-
-			self.treat = np.asarray(self.groups[1],dtype='object')
+			self.trt = trt
 			
 	def set_tidy_replicate_groups(self):
 		"""
@@ -645,14 +646,11 @@ class Cohort(object):
 		#copy sample groups dataframe
 		df = self.replicate_groups.T.copy()
 
-		#set Replicates as column in dataframe
-		df.loc[:,'Replicates'] = df.index
-
 		#melt to tidy dataframe
-		melted = pd.melt(df, 
-							id_vars=['Replicates'], 
-							value_vars=df.columns.tolist()[0:len(df.columns)-1],
-							var_name='Groups'
+		melted = pd.melt(df.reset_index(), 
+							id_vars=['replicate'], 
+							value_vars=df.columns.tolist()[1:len(df.columns)],
+							var_name='group'
 						)
 
 		#filter for group membership to samples
@@ -660,9 +658,6 @@ class Cohort(object):
 
 		#delete value {0,1} column-unnecessary since it now redundantly indicates membership 
 		del melted_filtered['value']
-
-		#set Samples dtype as string
-		melted_filtered.loc[:,'Replicates'] = melted_filtered['Replicates'].astype(str)
 
 		self.tidy_replicate_groups = melted_filtered
 
@@ -675,18 +670,14 @@ class Cohort(object):
 		None
 		
 		"""
-
 		#copy sample groups dataframe
-		df = self.sample_groups.copy()
-
-		#set Samples as column in dataframe
-		df.loc[:,'Samples'] = df.index
+		df = self.sample_groups.T.copy()
 
 		#melt to tidy dataframe
-		melted = pd.melt(df, 
-							id_vars=['Samples'], 
-							value_vars=df.columns.tolist()[0:len(df.columns)-1],
-							var_name='Groups'
+		melted = pd.melt(df.reset_index(), 
+							id_vars=['sample'], 
+							value_vars=df.columns.tolist()[1:len(df.columns)],
+							var_name='group'
 						)
 
 		#filter for group membership to samples
@@ -694,9 +685,6 @@ class Cohort(object):
 
 		#delete value {0,1} column-unnecessary since it now redundantly indicates membership 
 		del melted_filtered['value']
-
-		#set Samples dtype as string
-		melted_filtered.loc[:,'Samples'] = melted_filtered['Samples'].astype(str)
 
 		self.tidy_sample_groups = melted_filtered
 
@@ -721,7 +709,7 @@ class Cohort(object):
 		#subset ontology with proteins of interest
 		if string=='hq':
 
-			inds = tab.index.isin(self.proteins)
+			inds = tab.index.isin(self.markers)
 
 			return tab[inds]
 
@@ -821,7 +809,7 @@ class Cohort(object):
 		
 		#load raw and sample group dataframes
 		df_samples = df
-		df_sample_groups = self.sample_groups
+		df_sample_groups = self.sample_groups.copy()
 
 		#make rownames-presence/absence/mixed conditions of proteins amongst samples
 		val_grps = ('allq', 'allnotq', 'mixed')
@@ -831,8 +819,8 @@ class Cohort(object):
 			rownames.append("_".join(i))
 
 		#set column names-reference/indicator scenarios
-		x = self.groups != self.ref[0]
-		t = [ self.ref[0] + '/' + x for x in self.groups[x] ]
+		x = self.groups != self.ref
+		t = [ self.ref + '/' + x for x in self.groups[x] ]
 		colnames = tuple(t)
 		
 
@@ -852,14 +840,11 @@ class Cohort(object):
 						("mixed", mixed ) 
 					]
 
-		#set reference group
-		ref_grp = self.ref[0]
-
 		#loop through indicators to assess presense/absence/mixed proteins for each reference/indicator scenario and populate length/protein array dataframes
 		for i in self.groups[x]:
 
 			#set reference/indicator scenario
-			gr1 = ref_grp
+			gr1 = self.ref
 			gr2 = i
 			colname = gr1+"/"+gr2
 			print(colname)
@@ -979,8 +964,8 @@ class Cohort(object):
 		"""
 
 		#get subset dataframes by reference and treatment groups
-		df1 = self.get_sub_df(df,df_groups,self.ref[0])
-		df2 = self.get_sub_df(df,df_groups,self.treat[0])
+		df1 = self.get_sub_df(df,df_groups,self.ref)
+		df2 = self.get_sub_df(df,df_groups,self.treat)
 
 		#List of hypothesis test names and functions
 		tests = self.tests
@@ -1052,10 +1037,13 @@ class Cohort(object):
 
 		#get indices of replicates/samples in groups
 		inds = np.where(df_groups.loc[grp] == 1)
+
+		#get replicates/samples
+		samples = df_groups.columns[inds]
 		
-		#get 
+		#return
 		
-		return df.T.iloc[inds].T
+		return df.loc[:,samples]
 
 	#PROTEIN SUBSET FUNCTIONS
 
@@ -1077,9 +1065,9 @@ class Cohort(object):
 
 		return self.uniprot_annot(df,status=status).index.values
 
-	def proteins_in_n_replicates_per_samples(self,df,n_reps=1):
+	def proteins_in_n_replicates_per_samples(self,df,n_reps=1,value=0):
 		"""
-		Subsetting dataset by proteins that are quantified in more atleast n replicates per sample for all samples
+		Subsetting dataset by proteins that are quantified in more than n replicates per sample for all samples
 
 		Parameters
 		----------
@@ -1098,9 +1086,9 @@ class Cohort(object):
 		for samp in samp_rep_dict.keys():
 			reps = samp_rep_dict[samp]
 			sub = df.loc[:,reps]
-			mask = sub.apply(lambda x : x > 0,axis=1)
+			mask = sub.apply(lambda x : x > value,axis=1)
 			#proteins quantified in more than 1 replicates of a sample
-			prot_bool = mask.sum(axis=0) > n_reps
+			prot_bool = mask.sum(axis=1) > n_reps
 			[atleast1_reps.append(x) for x in prot_bool.index[prot_bool].tolist()]
 		
 		atleast1_rep_per_samp_prots = np.unique(atleast1_reps)
@@ -1289,13 +1277,11 @@ class Cohort(object):
 		------
 		subsetted dataset
 		"""
-		df_replicates = df
-		acc = df.index.tolist()
-		samples = self.samples
+		df_replicates = df.copy()
 		dictionary = self.sample_replicate_dictionary
 
 		# initializing empty, desired dataframe of samples by proteins
-		df_samples = pd.DataFrame(columns=samples)
+		df_samples = pd.DataFrame(index=self.markers,columns=self.samples)
 
 		#for each sample, apply the helper function to df_replicates sub dataframe to make df_samples
 		for sample in dictionary.keys():
@@ -1309,8 +1295,8 @@ class Cohort(object):
 			#put in df to larger df_samples
 			df_samples.loc[:,sample] = df
 
-		#add index-protein accessions
-		df_samples.index = acc
+		df_samples.columns.name = "sample"
+		df_samples.index.name = self.marker_type
 
 		return df_samples
 
