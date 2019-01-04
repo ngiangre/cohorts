@@ -101,7 +101,7 @@ class Cohort(object):
 		self.tidy_replicate_groups = None
 		self.tidy_sample_groups = None
 		self.groups = None
-		self.ref = reference
+		self.reference = reference
 		self.treat = treatment
 		self.set_replicates_file()
 		self.set_sample_groups_file()
@@ -615,7 +615,7 @@ class Cohort(object):
 		#set new reference variable if it's in the groups already. If not, just ignore it. 
 		if np.any(self.groups==ref):
 
-			self.ref = ref
+			self.reference = ref
 
 	def set_treat(self,trt='PGD'):
 		"""
@@ -631,7 +631,7 @@ class Cohort(object):
 		#set new reference variable if it's in the groups already. If not, just ignore it. 
 		if np.any(self.groups==trt):
 
-			self.trt = trt
+			self.treat = trt
 			
 	def set_tidy_replicate_groups(self):
 		"""
@@ -820,7 +820,7 @@ class Cohort(object):
 
 		#set column names-reference/indicator scenarios
 		x = self.groups != self.ref
-		t = [ self.ref + '/' + x for x in self.groups[x] ]
+		t = [ self.reference + '/' + x for x in self.groups[x] ]
 		colnames = tuple(t)
 		
 
@@ -946,7 +946,7 @@ class Cohort(object):
 
 		return protein_dict
 
-	def hypothesis_testing(self,df,df_groups):
+	def hypothesis_testing(self,df,df_groups,tests=None):
 		"""
 		Hypothesis testing of reference sample proteins versus treatment sample proteins.
 		
@@ -968,13 +968,17 @@ class Cohort(object):
 		df2 = self.get_sub_df(df,df_groups,self.treat)
 
 		#List of hypothesis test names and functions
-		tests = self.tests
+		if tests is None:
+			tests = self.tests
+		else:
+			print('A list of statistical tests are required. For example: [( "t-test",scipy.stats.ttest_ind )]. More than one can be given.')
+			tests = tests
 
 		#set dataframe to fill
 		df = pd.DataFrame(columns=['Protein','Test','Pvalue','Statistic'])
 
 		#for each hypothesis test name and function
-		for i, hyp in enumerate(tests):
+		for hyp in tests:
 
 			#set test name
 			test = hyp[0]
