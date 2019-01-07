@@ -77,50 +77,56 @@ class Cohort(object):
 		reference=None,
 		treatment=None):
 
+		# OBJECT CORE ATTRIBUTES
 		self.cwd = os.getcwd()
 		self.data_dir = data_dir
 		self.file_dir = file_dir
 		self.cohort = cohort
-		self.replicates_file = replicates_file
-		self.samples_file = samples_file
-		self.sample_groups_file = sample_groups_file
-		self.uniprot_file = uniprot_file
 		self.marker_type = marker_type
-		self.raw_samples = None
+		
+		self.reference = reference
+		self.treat = treatment
+		self.data = {}
+		self.params = {}
+
+		# REPLICATE SPECIFIC ATTRIBUTES
+		self.replicates_file = replicates_file
 		self.raw_replicates = None
 		self.replicates_hq = None
 		self.trans_replicates_hq = None
+		self.sample_replicate_dictionary = None
+		self.replicate_groups = None
+		self.replicates = None
+		
+		# SAMPLE SPECIFIC ATTRIBUTES
+		self.samples_file = samples_file
+		self.sample_groups_file = sample_groups_file
+		self.raw_samples = None
 		self.samples_hq = None
 		self.trans_samples_hq = None
-		self.sample_replicate_dictionary = None
 		self.samples = None
-		self.replicates = None
-		self.markers = None
-		self.replicate_groups = None
 		self.sample_groups = None
-		self.tidy_replicate_groups = None
-		self.tidy_sample_groups = None
 		self.groups = None
-		self.reference = reference
-		self.treat = treatment
-		self.set_replicates_file()
-		self.set_sample_groups_file()
-		self.set_raw_replicates()
-		self.set_replicates()
-		self.set_markers()
-		self.set_sample_replicate_dictionary()
-		self.set_samples()
-		self.set_sample_groups()
-		self.set_replicate_groups()
-		self.set_raw_samples()
-		self.set_groups()
-		self.set_tidy_replicate_groups()
-		self.set_tidy_sample_groups()
+		self.markers = None
 
-		#extra parameters/data objects that can be 
-		#attributed to an object instance
-		self.data = {}
-		self.params = {}
+		# MISCELLANEOUS ATTRIBUTES
+		self.uniprot_file = uniprot_file
+		
+		# SET ATTRIBUTE FUNCTIONS
+		if replicates_file is not None:
+			self.set_replicates_file()
+			self.set_raw_replicates()
+			self.set_replicates()
+			self.set_sample_replicate_dictionary()
+			self.set_raw_samples(got_replicates=True)
+
+			self.set_sample_groups_file()
+			self.set_sample_groups()
+			self.set_groups()
+			self.set_samples()
+			self.set_markers()
+				
+			self.set_replicate_groups()
 
 		
 	#SET FUNCTIONS
@@ -211,7 +217,7 @@ class Cohort(object):
 
 		"""
 
-		self.markers = self.raw_replicates.index.tolist()
+		self.markers = self.raw_samples.index.tolist()
 
 	def set_sample_replicate_dictionary(self):
 		"""
@@ -250,7 +256,7 @@ class Cohort(object):
 
 		self.sample_replicate_dictionary = dictionary
 
-	def set_raw_samples(self,agg='mean'):
+	def set_raw_samples(self,agg='mean',got_replicates=True):
 		"""
 		Setting raw sample dataframe 
 
@@ -266,9 +272,15 @@ class Cohort(object):
 
 		"""
 
-		df = self.raw_replicates.fillna(0)
-		
-		self.raw_samples = self.make_df_samples(df,agg=agg)
+		if got_replicates:
+			df = self.raw_replicates.fillna(0)
+			
+			self.raw_samples = self.make_df_samples(df,agg=agg)
+		else:
+			df = self.raw_replicates.fillna(0)
+			
+			self.raw_samples = self.make_df_samples(df,agg=agg)
+
 
 	def set_replicates_hq(self,
 		uniprot_annot=False,
@@ -632,61 +644,7 @@ class Cohort(object):
 		if np.any(self.groups==trt):
 
 			self.treat = trt
-			
-	def set_tidy_replicate_groups(self):
-		"""
-		Setting tidy group membership of replicates, where each replicate is the observation and group membership is an attribute (column)
 
-		Parameters
-		----------
-		None
-		
-		"""
-
-		#copy sample groups dataframe
-		df = self.replicate_groups.T.copy()
-
-		#melt to tidy dataframe
-		melted = pd.melt(df.reset_index(), 
-							id_vars=['replicate'], 
-							value_vars=df.columns.tolist()[1:len(df.columns)],
-							var_name='group'
-						)
-
-		#filter for group membership to samples
-		melted_filtered = melted.query('value != 0')
-
-		#delete value {0,1} column-unnecessary since it now redundantly indicates membership 
-		del melted_filtered['value']
-
-		self.tidy_replicate_groups = melted_filtered
-
-	def set_tidy_sample_groups(self):
-		"""
-		Setting tidy group membership of samples, where each sample is the observation and group membership is an attribute (column)
-
-		Parameters
-		----------
-		None
-		
-		"""
-		#copy sample groups dataframe
-		df = self.sample_groups.T.copy()
-
-		#melt to tidy dataframe
-		melted = pd.melt(df.reset_index(), 
-							id_vars=['sample'], 
-							value_vars=df.columns.tolist()[1:len(df.columns)],
-							var_name='group'
-						)
-
-		#filter for group membership to samples
-		melted_filtered = melted.query('value != 0')
-
-		#delete value {0,1} column-unnecessary since it now redundantly indicates membership 
-		del melted_filtered['value']
-
-		self.tidy_sample_groups = melted_filtered
 
 	def get_protein_annotations(self,string='hq'):
 
@@ -731,7 +689,7 @@ class Cohort(object):
 
 		return tab
 
-	def get_tidy_data(attribute=""):
+	def get_tidy_data(self,attribute=""):
 		"""
 		Returns tidy version of available attributes
 		
@@ -748,50 +706,18 @@ class Cohort(object):
 		
 		"""
 		
-		avail_attributes = ['sample_groups', 'replicate_groups', 'raw_replicates', 'raw_samples','replicates_hq','samples_hq']
+		attributes = [x for x in self.__dict__.keys()]
+		attribute_types = [type(getattr(self,x)) for x in self.__dict__.keys()]
+		inds = [x==pd.core.frame.DataFrame for x in attribute_types]
+		avail_attributes = np.array(attributes)[np.array(inds)].tolist()
 
 		if attribute not in avail_attributes:
 			raise Exception("Not one of:\n{}".format(avail_attributes))
-		elif attribute == 'sample_groups':
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Group' })
-				.melt(id_vars='Group',var_name='Sample')
-				.query('value==1')
-				.drop(['value'],axis=1)
-				)
-		elif attribute == 'replicate_groups':
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Group' })
-				.melt(id_vars='Group',var_name='Replicate')
-				.query('value==1')
-				.drop(['value'],axis=1)
-				)
-		elif attribute == 'raw_replicates':
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Protein' })
-				.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
-				)
-		elif attribute == 'replicates_hq' and getattr(obj,attribute) is not None:
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Protein' })
-				.melt(id_vars='Protein',var_name='Replicate',value_name='Value')
-				)
-		elif attribute == 'raw_samples':
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Protein' })
-				.melt(id_vars='Protein',var_name='Sample',value_name='Value')
-				)
-		elif attribute == 'samples_hq' and getattr(obj,attribute) is not None:
-			tidy = (getattr(obj,attribute)
-				.reset_index()
-				.rename(columns={ 'index' : 'Protein' })
-				.melt(id_vars='Protein',var_name='Sample',value_name='Value')
-				)
+
+		df = getattr(self,attribute).copy()
+
+		tidy = df.reset_index().melt(id_vars=df.index.name)
+
 		return tidy
 
 
@@ -819,7 +745,7 @@ class Cohort(object):
 			rownames.append("_".join(i))
 
 		#set column names-reference/indicator scenarios
-		x = self.groups != self.ref
+		x = self.groups != self.reference
 		t = [ self.reference + '/' + x for x in self.groups[x] ]
 		colnames = tuple(t)
 		
@@ -844,7 +770,7 @@ class Cohort(object):
 		for i in self.groups[x]:
 
 			#set reference/indicator scenario
-			gr1 = self.ref
+			gr1 = self.reference
 			gr2 = i
 			colname = gr1+"/"+gr2
 			print(colname)
@@ -964,7 +890,7 @@ class Cohort(object):
 		"""
 
 		#get subset dataframes by reference and treatment groups
-		df1 = self.get_sub_df(df,df_groups,self.ref)
+		df1 = self.get_sub_df(df,df_groups,self.reference)
 		df2 = self.get_sub_df(df,df_groups,self.treat)
 
 		#List of hypothesis test names and functions
