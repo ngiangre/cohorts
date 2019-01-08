@@ -25,7 +25,7 @@ class Cohort(object):
 	replicates_file: str
 		name of the replicates dataframe file
 
-		A proteins x B replicates
+		A markers x B replicates
 		comma (*.csv) or tab (*.tsv) delimited
 
 		replicate = "SampleName" + "_Rep[0-9]"
@@ -281,7 +281,6 @@ class Cohort(object):
 			
 			self.raw_samples = self.make_df_samples(df,agg=agg)
 
-
 	def set_replicates_hq(self,
 		uniprot_annot=False,
 		annot_status='reviewed',
@@ -292,9 +291,9 @@ class Cohort(object):
 		intrasamp_var=False,
 		higher=False):
 		"""
-		Setting proteins in raw dataframe to be reviewed by Uniprot
+		Setting markers in raw dataframe to be reviewed by Uniprot
 
-		Depends on : raw_replicates, proteins_in_n_replicates_per_samples, proteins_quant_all_reps, proteins_with_uniprot_annot, proteins_by_intrasample_variability
+		Depends on : raw_replicates, markers_in_n_replicates_per_samples, markers_quant_all_reps, proteins_with_uniprot_annot, markers_by_intrasample_variability
 
 		Parameters
 		----------
@@ -308,9 +307,9 @@ class Cohort(object):
 		n_reps
 			Number of replicates quantified per sample. See above
 		all_reps_quant {True,False}
-			Subset proteins by only those quantified in every replicate per sample
+			Subset markers by only those quantified in every replicate per sample
 		intrasamp_var {True,False}
-			Subset proteins by the amount of replicate variance per sample
+			Subset markers by the amount of replicate variance per sample
 		threshold
 			Quantile to subset variance from. See above
 		higher {True,False}
@@ -321,17 +320,17 @@ class Cohort(object):
 		#get raw data
 		df = self.raw_replicates.copy().fillna(0)
 
-		#subset to have proteins found in atleast sufficient_reps 
+		#subset to have markers found in atleast sufficient_reps 
 		#per sample for all samples
 		if quant_least_reps_per_samps:
-			prots = self.proteins_in_n_replicates_per_samples(df,n_reps=n_reps)
-			df = df.loc[prots]
+			markers = self.markers_in_n_replicates_per_samples(df,n_reps=n_reps)
+			df = df.loc[markers]
 
 		#subset to have proteins found in atleast n_reps 
 		#per sample for all samples
 		if all_reps_quant:
-			prots = self.proteins_quant_all_reps(df)
-			df = df.loc[prots]
+			markers = self.markers_quant_all_reps(df)
+			df = df.loc[markers]
 
 		#subset to have proteins with high annotation score
 		if uniprot_annot:
@@ -340,13 +339,13 @@ class Cohort(object):
 			prots = self.proteins_with_uniprot_annot(df,status=annot_status)
 			df = df.loc[prots]
 
-		# subset to have proteins with certain intrasample variability
+		# subset to have markers with certain intrasample variability
 		if intrasamp_var:
 
-			prots = self.proteins_by_intrasample_variability(df,
+			markers = self.markers_by_intrasample_variability(df,
 							higher=higher,
 							threshold=threshold)
-			df = df.loc[prots]
+			df = df.loc[markers]
 
 		self.replicates_hq = df
 
@@ -360,13 +359,13 @@ class Cohort(object):
 		"""
 		Transforming hq values with different functions, by default log1p.
 		
-		Depends on : replicates_hq, proteins_by_statistic_threshold
+		Depends on : replicates_hq, markers_by_statistic_threshold
 
 		Parameters
 		----------
 
 		trans: numerical transformation. Default: scikitlearn's StandardScaler
-			Indicates how to transform the raw protein values
+			Indicates how to transform the raw marker values
 		add_small
 			Add small value if any dataframe value is 0 - when log transforming
 		stat_threshold
@@ -412,11 +411,11 @@ class Cohort(object):
 
 		#subset to have proteins that meet a certain statistical threshold
 		if stat_thresh:
-			prots = self.proteins_by_statistic_threshold(data,
+			markers = self.markers_by_statistic_threshold(data,
 							statistic=statistic,
 							threshold=threshold,
 							higher=higher)
-			data = data.loc[prots]
+			data = data.loc[markers]
 
 		self.trans_replicates_hq = data
 
@@ -461,13 +460,13 @@ class Cohort(object):
 		"""
 		Transforming hq values with different functions, by default log1p.
 		
-		Depends on : samples_hq, proteins_by_statistic_threshold
+		Depends on : samples_hq, markers_by_statistic_threshold
 
 		Parameters
 		----------
 
 		trans: numerical transformation. Default: scikitlearn's StandardScaler
-			Indicates how to transform the raw protein values
+			Indicates how to transform the raw marker values
 		add_small
 			Add small value if any dataframe value is 0 - when log transforming
 		stat_threshold
@@ -493,7 +492,7 @@ class Cohort(object):
 		#all nonzero
 		if np.sum((data==0).values)>0:
 			add_small = True
-			print('There are zero values in the sample dataframe, a small number epsilon must be added to the protein values when there are zero values. Adding small epsilon...')
+			print('There are zero values in the sample dataframe, a small number epsilon must be added to the marker values when there are zero values. Adding small epsilon...')
 
 		#list of name-function pairs
 		func = [('log1p', np.log1p),
@@ -519,11 +518,11 @@ class Cohort(object):
 
 		#subset to have proteins that meet a certain statistical threshold
 		if stat_thresh:
-			prots = self.proteins_by_statistic_threshold(data,
+			markers = self.markers_by_statistic_threshold(data,
 							statistic=statistic,
 							threshold=threshold,
 							higher=higher)
-			data = data.loc[prots]
+			data = data.loc[markers]
 
 		self.trans_samples_hq = data
 
@@ -737,7 +736,7 @@ class Cohort(object):
 		df_samples = df
 		df_sample_groups = self.sample_groups.copy()
 
-		#make rownames-presence/absence/mixed conditions of proteins amongst samples
+		#make rownames-presence/absence/mixed conditions of markers amongst samples
 		val_grps = ('allq', 'allnotq', 'mixed')
 		tmp = list(it.product(val_grps,val_grps))
 		rownames = []
@@ -750,7 +749,7 @@ class Cohort(object):
 		colnames = tuple(t)
 		
 
-		#populate length and protein array dataframes
+		#populate length and marker array dataframes
 		df_len = pd.DataFrame(index=rownames,columns=colnames)
 		df_arr = pd.DataFrame(index=rownames,columns=colnames)
 
@@ -784,7 +783,7 @@ class Cohort(object):
 				tmp = singlefuncs[l][1](X)#slow
 				gr1_arr.append(tmp)
 		
-			#make arrays of proteins for reference samples for each assessment condition 
+			#make arrays of markers for reference samples for each assessment condition 
 			gr2_arr = []
 			tmp = df_samples.T
 			arr2 = df_sample_groups.loc[gr2] == 1
@@ -802,15 +801,15 @@ class Cohort(object):
 		#dictionary of length and protein array dataframes
 		dictionary = { 'df_len' : df_len, 'df_arr' : df_arr} 
 
-		helper_dictionary = self.make_protein_substraction(dictionary)
+		helper_dictionary = self.make_marker_substraction(dictionary)
 
 		self.data['mfe'] = { 'main' : dictionary, 'helper' : helper_dictionary } 
 
-	def make_protein_substraction(self,dictionary=None):
+	def make_marker_substraction(self,dictionary=None):
 		"""
-		Helper function only for manual_feature_extraction method to do set operations on protein results
+		Helper function only for manual_feature_extraction method to do set operations on marker results
 
-		Right now supports difference of proteins
+		Right now supports difference of markers
 
 		Parameters
 		----------
@@ -819,7 +818,7 @@ class Cohort(object):
 
 		Output
 		------
-		Dictionary of protein array length band array from difference ofv manually extracted features between ref and treat groups
+		Dictionary of marker array length band array from difference of manually extracted features between ref and treat groups
 		"""
 
 		#declare dictionary from manual feature extraction
@@ -828,8 +827,8 @@ class Cohort(object):
 		#set comparisons made in mfe
 		comps_grps = mfe['df_len'].columns.tolist()
 
-		#set protein feature comparisons from manual feature extraction
-		comps_prots = mfe['df_len'].index.tolist() 
+		#set marker feature comparisons from manual feature extraction
+		comps_markers = mfe['df_len'].index.tolist() 
 
 		#make combination of comparisons-resulting dataframe rows and columns
 		combs = list(
@@ -840,15 +839,15 @@ class Cohort(object):
 		)
 
 		#make dictionary of presence,absence, mixed. Values will be NxN dataframe labeled with combs above
-		protein_dict = dict.fromkeys(
-			comps_prots
+		markers_dict = dict.fromkeys(
+			comps_markers
 		)
 
-		#set dataframe to extract proteins from
+		#set dataframe to extract markers from
 		df = mfe['df_arr']
 
-		#loop through dictionary keys which are the protein feature comparisons
-		for i in protein_dict.keys():
+		#loop through dictionary keys which are the marker feature comparisons
+		for i in markers_dict.keys():
 
 			#make empty NxN dataframe to store protein lengths and arrays
 			empty_len = pd.DataFrame(
@@ -868,13 +867,13 @@ class Cohort(object):
 					empty_diff.at[j,k] = diff_arr
 
 			#store dictionary of dataframes as value in dictionary
-			protein_dict[i] = { 'df_len' : empty_len, 'df_arr' : empty_diff }
+			markers_dict[i] = { 'df_len' : empty_len, 'df_arr' : empty_diff }
 
-		return protein_dict
+		return markers_dict
 
 	def hypothesis_testing(self,df,df_groups,tests=None):
 		"""
-		Hypothesis testing of reference sample proteins versus treatment sample proteins.
+		Hypothesis testing of reference sample proteins versus treatment sample markers.
 		
 		Parameters
 		----------
@@ -901,7 +900,7 @@ class Cohort(object):
 			tests = tests
 
 		#set dataframe to fill
-		df = pd.DataFrame(columns=['Protein','Test','Pvalue','Statistic'])
+		df = pd.DataFrame(columns=[self.marker_type,'test','pvalue','statistic'])
 
 		#for each hypothesis test name and function
 		for hyp in tests:
@@ -910,11 +909,11 @@ class Cohort(object):
 			test = hyp[0]
 
 			#for each protein
-			for protein in df1.index:
+			for marker in df1.index:
 
 				#get protein location in dataframes
-				firstloc = df1.loc[protein]
-				secondloc = df2.loc[protein]
+				firstloc = df1.loc[marker]
+				secondloc = df2.loc[marker]
 
 				#make sure the arrays are filled with floats
 				a = firstloc.values.astype(float)
@@ -927,17 +926,17 @@ class Cohort(object):
 				pval = hyp[1](a,b)[1]
 
 				#put data in pandas series
-				row = pd.Series([protein,test,pval,stat],index=df.columns)
+				row = pd.Series([self.marker_type,test,pval,stat],index=df.columns)
 
 				#add row to dataframe
 				df = df.append(row,ignore_index=True)
 
 		#set correct object membership of dataframe columns
 		df = df.astype(dtype= {
-								"Protein":"str",
-								"Test":"str",
-								"Pvalue":"float64",
-								"Statistic":'float64'
+								self.marker_type:"str",
+								"test":"str",
+								"pvalue":"float64",
+								"statistic":'float64'
 							}
 						)
 
@@ -954,7 +953,7 @@ class Cohort(object):
 		Parameters
 		----------
 		df
-			proteomics data dataframe given to hypothesis_testing
+			'omics data dataframe given to hypothesis_testing
 		df_groups
 			groups dataframe given to hypothesis testing
 		grp str
@@ -975,18 +974,18 @@ class Cohort(object):
 		
 		return df.loc[:,samples]
 
-	#PROTEIN SUBSET FUNCTIONS
+	#MARKER SUBSET FUNCTIONS
 
 	def proteins_with_uniprot_annot(self,df,status='reviewed'):
 		"""
-		Get proteins that have high annotation score by uniprot
+		Get markers that have high annotation score by uniprot
 
 		Parameters
 		----------
 		df
 			dataframe to subset
 		status {'reviewed','unreviewed'}
-			protein annotation score from uniprot curation
+			markers annotation score from uniprot curation
 		
 		Output
 		------
@@ -995,9 +994,9 @@ class Cohort(object):
 
 		return self.uniprot_annot(df,status=status).index.values
 
-	def proteins_in_n_replicates_per_samples(self,df,n_reps=1,value=0):
+	def markers_in_n_replicates_per_samples(self,df,n_reps=1,value=0):
 		"""
-		Subsetting dataset by proteins that are quantified in more than n replicates per sample for all samples
+		Subsetting dataset by markers that are quantified in more than n replicates per sample for all samples
 
 		Parameters
 		----------
@@ -1008,7 +1007,7 @@ class Cohort(object):
 
 		Output
 		------
-		subsetted proteins
+		subsetted markers
 		"""
 		samp_rep_dict = self.sample_replicate_dictionary
 		
@@ -1017,17 +1016,17 @@ class Cohort(object):
 			reps = samp_rep_dict[samp]
 			sub = df.loc[:,reps]
 			mask = sub.apply(lambda x : x > value,axis=1)
-			#proteins quantified in more than 1 replicates of a sample
-			prot_bool = mask.sum(axis=1) > n_reps
-			[atleast1_reps.append(x) for x in prot_bool.index[prot_bool].tolist()]
+			#markers quantified in more than 1 replicates of a sample
+			markers_bool = mask.sum(axis=1) > n_reps
+			[atleast1_reps.append(x) for x in markers_bool.index[markers_bool].tolist()]
 		
-		atleast1_rep_per_samp_prots = np.unique(atleast1_reps)
+		atleast1_rep_per_samp_markers = np.unique(atleast1_reps)
 
-		return atleast1_rep_per_samp_prots
+		return atleast1_rep_per_samp_markers
 
-	def proteins_quant_all_reps(self,df):
+	def markers_quant_all_reps(self,df):
 		"""
-		Helper function returning all proteins that 
+		Helper function returning all markers that 
 		are quantified in every replicate.
 
 		Parameters
@@ -1037,10 +1036,10 @@ class Cohort(object):
 
 		Output
 		------
-		subsetted proteins
+		subsetted markers
 		"""
 
-		#determine how many reps show quantification of the protein
+		#determine how many reps show quantification of the marker
 		num_reps_quant = df.apply(lambda x : sum(x > 0),axis=1)
 
 		#is the num reps all of them?
@@ -1048,22 +1047,22 @@ class Cohort(object):
 			lambda x : x == df.shape[1])
 
 		#get protein names
-		allquant_prots = df.index[all_reps_quant]
+		allquant_markers = df.index[all_reps_quant]
 
-		return allquant_prots
+		return allquant_markers
 
-	def proteins_by_statistic_threshold(self,
+	def markers_by_statistic_threshold(self,
 		df,
 		statistic='mean',
 		higher=False,
 		threshold=80):
 		"""
-		Proteins that meet a certain statistical threshold
-		e.g. proteins that have low variance across the dataset
+		Markers that meet a certain statistical threshold
+		e.g. markers that have low variance across the dataset
 		
-		outputs proteins above/below that threshold
+		outputs markers above/below that threshold
 
-		e.g. threshold=25 gives proteins that are below the 25th quantile
+		e.g. threshold=25 gives markers that are below the 25th quantile
 		of the statistical function. Threshold=80 gives proteins that are 
 		below the 80th quantile of the statistical function
 		
@@ -1074,13 +1073,13 @@ class Cohort(object):
 		statistic: {'mean','median', 'variance'}
 			statistic to apply across values
 		higher {True,False}
-			Indicates whether to subset by proteins with a high annotation score from Uniprot
+			Indicates whether to subset by markers with a high annotation score from Uniprot
 		threshold [0,100]
 			Quantile for statistic threshold
 
 		Output
 		------
-		subsetted proteins
+		subsetted markers
 		
 		"""
 		#possible statistical functions to threshold by
@@ -1092,7 +1091,7 @@ class Cohort(object):
 		}
 		
 		#collect proteins in dataset
-		prots = df.index
+		markers = df.index
 		
 		#create series by applying statistic
 		series = df.apply(funcs[statistic],axis=1)
@@ -1109,14 +1108,14 @@ class Cohort(object):
 		#if greater than 50, greater than or equal to,
 		#otherwise, less than
 		if higher:
-			return prots[series.where(series > thresh).notnull()]
+			return markers[series.where(series > thresh).notnull()]
 		else:
-			return prots[series.where(series <= thresh).notnull()]
+			return markers[series.where(series <= thresh).notnull()]
 		
-	def proteins_by_intrasample_variability(self,
+	def markers_by_intrasample_variability(self,
 		df,higher=False,threshold=80):
 		"""
-		Output proteins below a certain variance threshold for 
+		Output markers below a certain variance threshold for 
 		replicates within all samples
 
 		Parameters
@@ -1124,13 +1123,13 @@ class Cohort(object):
 		df
 			dataframe to subset
 		higher {True,False}
-			Indicates whether to subset by proteins with a high annotation score from Uniprot
+			Indicates whether to subset by markers with a high annotation score from Uniprot
 		threshold [0,100]
 			Quantile for statistic threshold
 
 		Output
 		------
-		subsetted proteins
+		subsetted markers
 
 		"""
 
@@ -1139,18 +1138,18 @@ class Cohort(object):
 
 		samp_rep_dict = self.sample_replicate_dictionary
 
-		prots = pd.Index([])
+		markers = pd.Index([])
 
 		for samp in samp_rep_dict.keys():
 			reps = samp_rep_dict.get(samp)
 			sub = df.loc[np.asarray(reps)]
-			prots = prots.append( \
-				self.proteins_by_statistic_threshold(df=sub.T,
+			markers = markers.append( \
+				self.markers_by_statistic_threshold(df=sub.T,
 					higher=False,
 					statistic='variance',
 					threshold=threshold))
 
-		return prots.unique()
+		return markers.unique()
 
 	#HELPER FUNCTIONS
 	def uniprot_annot(self, df,status='reviewed'):
@@ -1284,13 +1283,7 @@ class IntegratedCohort(object):
 		self.df = multi_df_join(dfs).dropna()
 		self.df_groups = multi_df_join(df_groups).dropna()
 
-def make_cohorts_dict(names,
-					file_dirs,
-					treats,refs,
-					replicates_files,
-					sample_groups_files,
-					data_dir="../../data/",
-					uniprot_file="uniprot-all_20171124.tab.gz"):
+def make_cohorts_dict(names,file_dirs,treats,refs,replicates_files,sample_groups_files,data_dir="../../data/",uniprot_file="uniprot-all_20171124.tab.gz"):
 	"""
 	Create cohort objects via dictionaries of attributes where the key of each dfictionary is the name of the cohort object
 	
@@ -1304,6 +1297,7 @@ def make_cohorts_dict(names,
 	objs
 		Dictionary where keys are each cohort object name and values are the instantiaated cohort object.
 	"""
+
 	if len(names)==0:
 		return {}
 	else:
