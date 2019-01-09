@@ -47,11 +47,13 @@ class Cohort(object):
 	Examples
 	--------
 	>>>c = cohorts.Cohort(cohort='cohort_name',
-		file_dir="path/to/files/"
+		file_dir="path/to/files/",
 		replicates_file="file_name",
+		samples_file="file_name",
 		sample_groups_file="sample_groups_file_name",
 		data_dir="path/to/data/dir/",
-		uniprot_file="uniprot_flat_file"
+		marker_type="protein",
+		reference="ref",treatment="trt"
 		)
 	>>>c.set_replicates_hq()
 	>>>c.set_trans_replicates_hq()
@@ -70,7 +72,6 @@ class Cohort(object):
 		replicates_file=None,
 		samples_file=None,
 		sample_groups_file=None,
-		uniprot_file=None,
 		file_dir="",
 		data_dir="../../data/",
 		marker_type="protein",
@@ -108,9 +109,6 @@ class Cohort(object):
 		self.sample_groups = None
 		self.groups = None
 		self.markers = None
-
-		# MISCELLANEOUS ATTRIBUTES
-		self.uniprot_file = uniprot_file
 		
 		# SET ATTRIBUTE FUNCTIONS
 		if replicates_file is not None:
@@ -158,17 +156,6 @@ class Cohort(object):
 
 		"""
 		self.sample_groups_file = str(self.file_dir) + str(self.sample_groups_file)
-
-	def set_uniprot_file(self):
-		"""
-		Setting the path to the uniprot flat file
-
-		Parameters
-		----------
-		None
-
-		"""
-		self.uniprot_file = str(self.data_dir) + str(self.uniprot_file)
 
 	def set_raw_replicates(self):
 		"""
@@ -332,13 +319,6 @@ class Cohort(object):
 			markers = self.markers_quant_all_reps(df)
 			df = df.loc[markers]
 
-		#subset to have proteins with high annotation score
-		if uniprot_annot:
-			#set uniprot file if asked for, for protein filtering
-			self.set_uniprot_file()
-			prots = self.proteins_with_uniprot_annot(df,status=annot_status)
-			df = df.loc[prots]
-
 		# subset to have markers with certain intrasample variability
 		if intrasamp_var:
 
@@ -440,13 +420,6 @@ class Cohort(object):
 
 		#get processed replicates
 		df = self.trans_replicates_hq
-
-		#subset to have proteins with high annotation score
-		if uniprot_annot:
-			#set uniprot file if asked for, for protein filtering
-			self.set_uniprot_file()
-			prots = self.proteins_with_uniprot_annot(df,status=annot_status)
-			df = df.loc[prots]
 
 		self.samples_hq = self.make_df_samples( df , agg = agg )
 
@@ -643,50 +616,6 @@ class Cohort(object):
 		if np.any(self.groups==trt):
 
 			self.treat = trt
-
-
-	def get_protein_annotations(self,string='hq'):
-
-		'''
-		Get Uniprot protein ontology data
-
-		Parameters
-		----------
-		string : string
-			Indicate ontology data for either uniprot expert-curated or 'reviewed' proteins or all proteins from raw
-
-		Output
-		-------
-		tab : Ontology dataframe
-		'''
-
-		#get uniprot ontology
-		tab = get_uniprot_table()
-
-		#subset ontology with proteins of interest
-		if string=='hq':
-
-			inds = tab.index.isin(self.markers)
-
-			return tab[inds]
-
-		if string=='all':
-
-			return tab
-
-	def get_uniprot_table(self):
-		"""
-		Upload uniprot database flat file
-
-		Parameters
-		----------
-		None
-
-		"""
-	
-		tab = pd.read_csv(self.data_dir+self.uniprot_file,delimiter="\t",index_col=0)
-
-		return tab
 
 	def get_tidy_data(self,attribute=""):
 		"""
@@ -976,24 +905,6 @@ class Cohort(object):
 
 	#MARKER SUBSET FUNCTIONS
 
-	def proteins_with_uniprot_annot(self,df,status='reviewed'):
-		"""
-		Get markers that have high annotation score by uniprot
-
-		Parameters
-		----------
-		df
-			dataframe to subset
-		status {'reviewed','unreviewed'}
-			markers annotation score from uniprot curation
-		
-		Output
-		------
-		subsetted uniprot database
-		"""
-
-		return self.uniprot_annot(df,status=status).index.values
-
 	def markers_in_n_replicates_per_samples(self,df,n_reps=1,value=0):
 		"""
 		Subsetting dataset by markers that are quantified in more than n replicates per sample for all samples
@@ -1073,7 +984,7 @@ class Cohort(object):
 		statistic: {'mean','median', 'variance'}
 			statistic to apply across values
 		higher {True,False}
-			Indicates whether to subset by markers with a high annotation score from Uniprot
+			Indicates whether to subset by markers higher (True) than or less than/equal to (False) the threshold score 
 		threshold [0,100]
 			Quantile for statistic threshold
 
@@ -1123,7 +1034,7 @@ class Cohort(object):
 		df
 			dataframe to subset
 		higher {True,False}
-			Indicates whether to subset by markers with a high annotation score from Uniprot
+			Indicates whether to subset by markers higher (True) than or less than/equal to (False) the threshold score
 		threshold [0,100]
 			Quantile for statistic threshold
 
@@ -1152,45 +1063,6 @@ class Cohort(object):
 		return markers.unique()
 
 	#HELPER FUNCTIONS
-	def uniprot_annot(self, df,status='reviewed'):
-		"""
-		Subset dataset by proteins that have high annotation score by uniprot
-
-		Parameters
-		----------
-		df
-			dataframe to subset
-		annot_status {'reviewed','unreviewed'}
-			Annotation status in uniprot
-
-		Output
-		------
-		subsetted dataset
-		"""
-
-		#get uniprot data
-		annot = self.get_protein_annotations('hq')
-
-		#get reviewed uniprot data
-		annot_reviewed = annot[annot['Status'].str.match(status)]
-
-		#getting all uniprot reviewed proteins
-		cprots = annot_reviewed.iloc[:,0].index
-
-		#filter raw for reviewed proteins
-		raw_reviewed = df[df.index.isin(cprots)]
-
-		#set new protein column
-		tmp = raw_reviewed.assign(Proteins=raw_reviewed.index.values)
-
-		#group proteins because there might be duplicates
-		grouped = tmp.groupby('Proteins')
-
-		#get one of the duplicated proteins
-		reviewed = grouped.max()
-
-		return reviewed
-
 	def make_df_samples(self,df,agg='mean'):
 		"""
 		From df_replicates, make df_samples by applying to the replicates for a sample the estimator indicated in the helper function
@@ -1283,7 +1155,7 @@ class IntegratedCohort(object):
 		self.df = multi_df_join(dfs).dropna()
 		self.df_groups = multi_df_join(df_groups).dropna()
 
-def make_cohorts_dict(names,file_dirs,treats,refs,replicates_files,sample_groups_files,data_dir="../../data/",uniprot_file="uniprot-all_20171124.tab.gz"):
+def make_cohorts_dict(names,file_dirs,replicates_files,samples_file,sample_groups_files,data_dirs,marker_types,references,treatments):
 	"""
 	Create cohort objects via dictionaries of attributes where the key of each dfictionary is the name of the cohort object
 	
@@ -1304,12 +1176,12 @@ def make_cohorts_dict(names,file_dirs,treats,refs,replicates_files,sample_groups
 		objs = {}
 		for cohort in names:
 			obj = Cohort(cohort=cohort,
-								data_dir=data_dir,file_dir=file_dirs[cohort],
+								data_dir=data_dirs[cohort],file_dir=file_dirs[cohort],
 								replicates_file=replicates_files[cohort],
+								samples_file=replicates_files[cohort],
 								sample_groups_file=sample_groups_files[cohort],
-								uniprot_file=uniprot_file)
-			obj.set_ref(refs[cohort])
-			obj.set_treat(treats[cohort])
+								marker_type=marker_types[cohort],
+								reference=references[cohort],treatment=treatments[cohort])
 			objs[cohort] = obj
 		return objs
 
@@ -1317,5 +1189,5 @@ if __name__=="__main__":
 	"""
 	Execute
 	"""
-	name =  'cumc'
+	name =  'cohort_name'
 	c = cohorts.Cohort(name)
