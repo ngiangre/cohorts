@@ -33,6 +33,13 @@ df_replicates = pd.DataFrame(protein_values.reshape(len(proteins),len(replicates
                                 index = proteins, columns = replicates)
 df_replicates.to_csv(out_dir+"df_replicates.tsv",sep="\t")
 
+#Make df_samples dataframe
+mat_num = len(proteins) * len(samples)
+protein_values = np.random.exponential(2,mat_num)
+df_samples = pd.DataFrame(protein_values.reshape(len(proteins),len(samples)),
+                                index = proteins, columns = samples)
+df_samples.to_csv(out_dir+"df_samples.tsv",sep="\t")
+
 #Make df_sample_groups dataframe
 trt_status = np.repeat([1,0],np.floor(n_samples/2).astype(int))
 ref_status = np.repeat([0,1],np.ceil(n_samples/2).astype(int))

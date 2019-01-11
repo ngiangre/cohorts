@@ -125,6 +125,16 @@ class Cohort(object):
 			self.set_markers()
 				
 			self.set_replicate_groups()
+		else:
+			if samples_file is not None:
+				self.set_samples_file()
+				self.set_raw_samples(got_replicates=False)
+
+				self.set_sample_groups_file()
+				self.set_sample_groups()
+				self.set_groups()
+				self.set_samples()
+				self.set_markers()
 
 		
 	#SET FUNCTIONS
@@ -134,7 +144,6 @@ class Cohort(object):
 		Setting the replicates file string.
 		Combination of the file directory string and the replicates file string
 
-		A csv file is needed!
 		Parameters
 		----------
 		None
@@ -142,6 +151,19 @@ class Cohort(object):
 		"""
 
 		self.replicates_file = str(self.file_dir) + str(self.replicates_file)
+
+	def set_samples_file(self):
+		"""
+		Setting the samples file string.
+		Combination of the file directory string and the samples file string
+
+		Parameters
+		----------
+		None
+
+		"""
+
+		self.samples_file = str(self.file_dir) + str(self.samples_file)
 
 	def set_sample_groups_file(self):
 		"""
@@ -264,9 +286,15 @@ class Cohort(object):
 			
 			self.raw_samples = self.make_df_samples(df,agg=agg)
 		else:
-			df = self.raw_replicates.fillna(0)
+			splt = self.samples_file.split(".")
+			format = splt[len(splt)-1][0]
+			if format is 'c':
+				self.raw_samples = pd.read_csv(self.samples_file,delimiter=",",index_col=0).sort_index(axis=0).sort_index(axis=1)
+			else:
+				self.raw_samples = pd.read_csv(self.samples_file,delimiter="\t",index_col=0).sort_index(axis=0).sort_index(axis=1)
 			
-			self.raw_samples = self.make_df_samples(df,agg=agg)
+			self.raw_samples.index.name = self.marker_type
+			self.raw_samples.columns.name = "sample"
 
 	def set_replicates_hq(self,
 		uniprot_annot=False,
@@ -510,7 +538,7 @@ class Cohort(object):
 		None
 
 		"""
-		self.samples = [x for x in self.sample_replicate_dictionary.keys()]
+		self.samples = self.raw_samples.columns.values
 
 	def set_sample_groups(self,file=None):
 		"""
