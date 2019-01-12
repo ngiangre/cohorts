@@ -1145,9 +1145,9 @@ class IntegratedCohort(object):
 
 	"""
 
-	def __init__(self,cohort_objs={}):
+	def __init__(self,cohorts={}):
 
-		self.cohort_objs = cohort_objs
+		self.cohorts_dictionary = cohorts
 		self.df = None
 		self.df_groups = None
 
@@ -1155,7 +1155,7 @@ class IntegratedCohort(object):
 
 		return "Hello!"
 
-	def integrate_cohorts(self,treat_name="PGD",ref_name="NL",dataset_type='samples_hq',groups_type='sample_groups'):
+	def integrate_cohorts(self,dataset_type='samples_hq',groups_type='sample_groups'):
 		'''
 		For created dataset integrating cohorts data
 		
@@ -1175,7 +1175,7 @@ class IntegratedCohort(object):
 		'''
 		dfs = {}
 		df_groups = {}
-		for cohort,obj in self.cohort_objs.items():
+		for cohort,obj in self.cohorts_dictionary.items():
 			dfs[cohort] = getattr(obj,dataset_type)
 			df = getattr(obj,groups_type)
 			df_groups[cohort] = df
