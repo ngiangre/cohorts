@@ -21,7 +21,7 @@ cd cohorts/
 pip install setup.py
 ```
 
-## Testing in a `pyenv`
+## Installation in a `pyenv`
 
 ```
 cd pkg_dev/
