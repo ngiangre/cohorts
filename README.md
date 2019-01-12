@@ -4,7 +4,7 @@
 
 Written by Nicholas Giangreco
 
-Copyright (c) 2018 by the Tatonetti Lab
+Copyright (c) 2019 by the Tatonetti Lab
 
 ## Goal
 
