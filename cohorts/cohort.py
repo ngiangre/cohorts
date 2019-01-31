@@ -883,7 +883,7 @@ class Cohort(object):
 				pval = hyp[1](a,b)[1]
 
 				#put data in pandas series
-				row = pd.Series([self.marker_type,test,pval,stat],index=df.columns)
+				row = pd.Series([marker,test,pval,stat],index=df.columns)
 
 				#add row to dataframe
 				df = df.append(row,ignore_index=True)
