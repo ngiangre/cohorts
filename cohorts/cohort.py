@@ -1177,11 +1177,10 @@ class IntegratedCohort(object):
 		df_groups = {}
 		for cohort,obj in self.cohorts_dictionary.items():
 			dfs[cohort] = getattr(obj,dataset_type)
-			df = getattr(obj,groups_type)
-			df_groups[cohort] = df
+			df_groups[cohort] = getattr(obj,groups_type)
 
-		self.df = multi_df_join(dfs).dropna()
-		self.df_groups = multi_df_join(df_groups).dropna()
+		self.df = multi_df_join(dfs).dropna().sort_index(axis=0).sort_index(axis=1)
+		self.df_groups = multi_df_join(df_groups).dropna().sort_index(axis=0).sort_index(axis=1)
 
 def make_cohorts_dict(names,file_dirs,replicates_files,samples_file,sample_groups_files,data_dirs,marker_types,references,treatments):
 	"""

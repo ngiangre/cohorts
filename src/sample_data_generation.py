@@ -94,6 +94,8 @@ df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
 ##########
 
+ref_loc = 5
+trt_loc = 25
 
 #####PATIENT COHORT 1#####
 
@@ -107,18 +109,18 @@ samples = ["P1-"+ str(i) for i in np.arange(1,n_samples + 1,1)]
 replicates = make_replicates_from_samples(samples)
 
 #Make df_replicates dataframes
-df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=2,loc2=20)
+df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=ref_loc,loc2=trt_loc)
 df_replicates.to_csv(out_dir+"df_replicates.tsv",sep="\t")
 
 #Make df_samples dataframe
-df_samples = make_df_samples(markers=proteins,samples=samples,loc1=2,loc2=20)
+df_samples = make_df_samples(markers=proteins,samples=samples,loc1=ref_loc,loc2=trt_loc)
 df_samples.to_csv(out_dir+"df_samples.tsv",sep="\t")
 
 #Make df_sample_groups dataframe
 df_sample_groups = make_df_sample_groups(samples)
 df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
-#####PATIENT COHORT 1#####
+#####PATIENT COHORT 2#####
 
 out_dir = "~/Github/cohorts/sample_data/patient_cohort_2/"
 
@@ -130,18 +132,18 @@ samples = ["P2-"+ str(i) for i in np.arange(1,n_samples + 1,1)]
 replicates = make_replicates_from_samples(samples)
 
 #Make df_replicates dataframes
-df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=3,loc2=21)
+df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=ref_loc,loc2=trt_loc)
 df_replicates.to_csv(out_dir+"df_replicates.tsv",sep="\t")
 
 #Make df_samples dataframe
-df_samples = make_df_samples(markers=proteins,samples=samples,loc1=3,loc2=21)
+df_samples = make_df_samples(markers=proteins,samples=samples,loc1=ref_loc,loc2=trt_loc)
 df_samples.to_csv(out_dir+"df_samples.tsv",sep="\t")
 
 #Make df_sample_groups dataframe
 df_sample_groups = make_df_sample_groups(samples)
 df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
-#####PATIENT COHORT 1#####
+#####PATIENT COHORT 3#####
 
 out_dir = "~/Github/cohorts/sample_data/patient_cohort_3/"
 
@@ -153,11 +155,11 @@ samples = ["P3-"+ str(i) for i in np.arange(1,n_samples + 1,1)]
 replicates = make_replicates_from_samples(samples)
 
 #Make df_replicates dataframes
-df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=1,loc2=19)
+df_replicates = make_df_replicates(markers=proteins,replicates=replicates,loc1=ref_loc,loc2=trt_loc)
 df_replicates.to_csv(out_dir+"df_replicates.tsv",sep="\t")
 
 #Make df_samples dataframe
-df_samples = make_df_samples(markers=proteins,samples=samples,loc1=1,loc2=19)
+df_samples = make_df_samples(markers=proteins,samples=samples,loc1=ref_loc,loc2=trt_loc)
 df_samples.to_csv(out_dir+"df_samples.tsv",sep="\t")
 
 #Make df_sample_groups dataframe
