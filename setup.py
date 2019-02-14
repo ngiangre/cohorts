@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 setup(name='cohorts',
-      version='0.2a',
+      version='0.3a',
       description='Proteomics exosome_pgf cohort structure',
       long_description=long_description,
       long_description_content_type='text/markdown',
