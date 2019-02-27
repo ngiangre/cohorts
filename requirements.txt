@@ -1,4 +1,3 @@
-logging==0.4.9.6
 numpy
 pandas
 python-dateutil
