@@ -18,7 +18,7 @@ This python package aims to provide standardization in creating a data structure
 ```
 git clone https://github.com/ngiangre/cohorts.git
 cd cohorts/
-pip install setup.py
+pip3 install .
 ```
 
 ## Installation in a `pyenv`
@@ -33,19 +33,12 @@ git clone https://github.com/ngiangre/cohorts.git
 cd cohorts/
 python setup.py install
 ```
-## Testing with `nosetests`
+#### Testing with `nosetests` (for author)
 
 ```
 cd cohorts/cohorts
 /anaconda/envs/py3/bin/nosetests
 ```
-
-### Python module dependencies
-
-numpy
-pandas
-scipy
-scikit-learn
 
 
 ## Contribute
