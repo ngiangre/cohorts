@@ -9,7 +9,7 @@ with open('README.md','r') as f:
 
 setuptools.setup(
 	name='cohorts',
-	version='0.2a',
+	version='0.3a0',
 	description='Proteomics exosome_pgf cohort structure',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
