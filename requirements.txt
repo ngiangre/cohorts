@@ -1,4 +1,4 @@
-cohorts==0.2a0
+cohorts==0.3a0
 logging==0.4.9.6
 numpy==1.15.4
 pandas==0.23.4
