@@ -26,7 +26,6 @@ setuptools.setup(
 	install_requires=[
 	'numpy',
 	'pandas',
-	'logging',
 	'scipy',
 	'scikit-learn',
 	'jupyter',
