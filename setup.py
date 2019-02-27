@@ -29,7 +29,9 @@ setuptools.setup(
 	'logging',
 	'scipy',
 	'scikit-learn',
-	'jupyter'
+	'jupyter',
+	'ipyparallel',
+	'jupyter_nbextensions_configurator'
 	],
 	test_suite='nose.collector',
 	tests_require=['nose'],
