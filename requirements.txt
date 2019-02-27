@@ -7,5 +7,3 @@ scikit-learn
 scipy==1.2.0rc2
 six
 jupyter
-ipyparallel
-jupyter_nbextensions_configurator
