@@ -47,7 +47,7 @@ Bioinformatics_Note_Implementation.ipynb reproduces the code and figures for the
 
 Please do! Both cohort data structure and functionality features are needed. 
 
-To contribute, please subnmit a pull request.
+To contribute, please submit a pull request.
 
 ## License
 
