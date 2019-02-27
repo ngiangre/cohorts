@@ -1,4 +1,4 @@
-<!--
+"""
 import ..cohorts.cohorts
 
 top = "../"
@@ -22,7 +22,7 @@ c = cohorts.Cohort(cohort=cohort[cohort_name],marker_type="protein",
 def test():
 
 	assert isinstance(c.cohort,str)
--->
+"""
 
 def test():
 	assert True
