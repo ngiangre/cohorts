@@ -34,6 +34,14 @@ cd cohorts/
 pip3 install .
 ```
 
+## Implementation
+
+Please see the accompanying python notebooks in the directory for how to use the package.
+
+Introduction.pynb gives an overview of features and how to use the functionality.
+
+Bioinformatics_Note_Implementation.ipynb reproduces the code and figures for the Implementation section of the manuscript that accompanies this python package. The manuscript will give more detail on the motivation and structure of this package. 
+
 
 ## Contribute
 
@@ -44,6 +52,10 @@ To contribute, please subnmit a pull request.
 ## License
 
 This software is released under the MIT license, which can be found in LICENSE in the root directory of this repository.
+
+## Citation
+
+Giangreco, N. Fine, B. Tatonetti, N. cohorts: A Python package for clinical ‘omics data management. _Bioinformatics Note_ (in preparation)
 
 <!--
 #### Testing with `nosetests` (for author)
