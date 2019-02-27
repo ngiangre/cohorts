@@ -24,6 +24,7 @@ pip install setup.py
 ## Installation in a `pyenv`
 
 ```
+mkdir pkg_dev
 cd pkg_dev/
 virtualenv cohorts -p python3
 cd cohorts
