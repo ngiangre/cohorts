@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import logging
 from functools import reduce
 import scipy.stats as sc
 
@@ -197,7 +196,6 @@ def multi_df_join(df_dict):
 			df = input_df
 		else:
 			df = df.join(input_df, how='outer')
-		logging.debug("Shape is currently: {}".format(df.shape))
 
 	return df
 
