@@ -1,4 +1,3 @@
-cohorts
 logging
 numpy
 pandas
