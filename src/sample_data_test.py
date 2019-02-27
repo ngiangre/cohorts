@@ -1,7 +1,7 @@
 """
 Testing cohorts package using sample data
 """
-import cohorts
+import ..cohorts
 
 #setting input parameters to make cohorts
 top = "~/Github/cohorts/"
