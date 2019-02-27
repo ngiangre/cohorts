@@ -31,13 +31,7 @@ cd cohorts
 source bin/activate
 git clone https://github.com/ngiangre/cohorts.git
 cd cohorts/
-python setup.py install
-```
-#### Testing with `nosetests` (for author)
-
-```
-cd cohorts/cohorts
-/anaconda/envs/py3/bin/nosetests
+pip3 install .
 ```
 
 
@@ -51,3 +45,9 @@ To contribute, please subnmit a pull request.
 
 This software is released under the MIT license, which can be found in LICENSE in the root directory of this repository.
 
+<>#### Testing with `nosetests` (for author)
+
+<>```
+<>cd cohorts/cohorts
+<>/anaconda/envs/py3/bin/nosetests
+<>```
