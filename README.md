@@ -45,9 +45,11 @@ To contribute, please subnmit a pull request.
 
 This software is released under the MIT license, which can be found in LICENSE in the root directory of this repository.
 
-<>#### Testing with `nosetests` (for author)
+<!--
+#### Testing with `nosetests` (for author)
 
-<>```
-<>cd cohorts/cohorts
-<>/anaconda/envs/py3/bin/nosetests
-<>```
+```
+cd cohorts/cohorts
+/anaconda/envs/py3/bin/nosetests
+```
+-->
