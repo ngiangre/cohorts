@@ -2,7 +2,7 @@
 For trying out new features
 """
 
-import cohorts
+from ..cohorts import *
 
 #setting input parameters to make cohorts
 top = "~/Github/cohorts/"
