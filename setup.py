@@ -28,7 +28,8 @@ setuptools.setup(
 	'pandas',
 	'logging',
 	'scipy',
-	'scikit-learn'
+	'scikit-learn',
+	'jupyter'
 	],
 	test_suite='nose.collector',
 	tests_require=['nose'],
