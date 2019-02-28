@@ -1,4 +1,4 @@
-import ..cohorts.cohorts
+from ..cohorts import *
 
 top = "../"
 data_dirs = { 'my_cohort' : top+"data/" }
