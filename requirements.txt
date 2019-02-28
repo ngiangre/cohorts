@@ -1,7 +1,5 @@
 numpy
 pandas
-python-dateutil
-pytz
 scikit-learn
 scipy==1.2.0rc2
 six
