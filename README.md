@@ -1,5 +1,7 @@
 # `Cohorts`
 
+[![Build Status](https://travis-ci.com/ngiangre/cohorts.svg?branch=master)](https://travis-ci.com/ngiangre/cohorts)
+
 ### A python package for standardized and reproducible processing, analysis, and integration of clinical biomarker data
 
 Written by Nicholas Giangreco
