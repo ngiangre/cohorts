@@ -1,3 +1,4 @@
+'''
 from cohorts import Cohort
 
 top = "../"
@@ -22,6 +23,7 @@ def test():
 
 	assert isinstance(c.cohort,str)
 
+'''
 
 # given 
 def test():
