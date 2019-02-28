@@ -1,5 +1,4 @@
-'''
-from ..cohorts import *
+from cohorts import Cohort
 
 top = "../"
 data_dirs = { 'my_cohort' : top+"data/" }
@@ -11,7 +10,7 @@ cohort = { 'my_cohort' : 'my_cohort' }
 references = { 'my_cohort' : 'ref' }
 treatments = { 'my_cohort' : 'trt' }
 cohort_name = 'my_cohort'
-c = cohorts.Cohort(cohort=cohort[cohort_name],marker_type="protein",
+c = Cohort(cohort=cohort[cohort_name],marker_type="protein",
 					data_dir=data_dirs[cohort_name],file_dir=file_dirs[cohort_name],
 					replicates_file=replicates_files[cohort_name],
 					#sample_files=sample_files[cohort],
@@ -22,7 +21,7 @@ c = cohorts.Cohort(cohort=cohort[cohort_name],marker_type="protein",
 def test():
 
 	assert isinstance(c.cohort,str)
-'''
+
 
 # given 
 def test():
