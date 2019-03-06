@@ -159,9 +159,18 @@ def quantileNormalize(df_input):
 		df[col] = [rank[i] for i in t]
 	return df
 
-	#from here
-#https://gist.github.com/mpschr/5db20df78c034654f030
+def mean_std_normalize(df):
+	"""
+	Return the dataframe with marker values normalized by substracting the mean and dividing by the standard deviation of each marker across samples
 
+	Assumption is that the samples are the columns and markers are the rows!
+	"""
+
+	tmp = df.copy()
+
+	return tmp.apply(lambda x : (x - np.mean(x)) / np.std(x),axis=1)
+
+#https://gist.github.com/mpschr/5db20df78c034654f030
 def multi_df_join(df_dict):
 	"""
 	Takes a list of dataframes with the same primary key (id) and merges the columns, using

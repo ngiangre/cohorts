@@ -4,7 +4,6 @@ import os
 import numpy as np
 import pandas as pd
 import scipy.stats as sc
-from sklearn.preprocessing import StandardScaler
 import itertools as it
 
 class Cohort(object):
@@ -390,15 +389,11 @@ class Cohort(object):
 		#set hq dataframe; make sure there's no NaN values
 		df = self.replicates_hq
 
-		#instantiate/declare/set up Standard scaler model from
-		#scikitlearn on data
-		scaler = StandardScaler()
-		scaler.fit(df)
 
 		#list of name-function pairs
 		func = [('log1p', np.log1p),
 				('log2', np.log2),
-				('sklearn', scaler.transform),
+				('standard', mean_std_normalize),
 				('rank_normalize', rank_normalize),
 				('quantile_normalize', quantileNormalize),
 				('None', pd.DataFrame.copy)]
@@ -484,10 +479,6 @@ class Cohort(object):
 		#set hq dataframe; make sure there's no NaN values
 		data = self.samples_hq
 
-		#instantiate/declare/set up Standard scaler model from
-		#scikitlearn on data
-		scaler = StandardScaler()
-		scaler.fit(data)
 
 		#only do log (other than log1p) transformations if values are
 		#all nonzero
@@ -498,7 +489,7 @@ class Cohort(object):
 		#list of name-function pairs
 		func = [('log1p', np.log1p),
 				('log2', np.log2),
-				('sklearn', scaler.transform),
+				('standard', mean_std_normalize),
 				('rank_normalize', rank_normalize),
 				('quantile_normalize', quantileNormalize),
 				('None', pd.DataFrame.copy)]

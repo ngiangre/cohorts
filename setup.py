@@ -27,7 +27,6 @@ setuptools.setup(
 	'numpy',
 	'pandas',
 	'scipy',
-	'scikit-learn',
 	'jupyter',
 	'ipyparallel',
 	'jupyter_nbextensions_configurator'
