@@ -2,7 +2,7 @@
 import unittest
 from cohorts import Cohort
 
-class TestStringMethods(object):
+class TestCohortMethods(object):
 
 
 	def __init__(self):
@@ -33,6 +33,5 @@ class TestStringMethods(object):
 if __name__ == '__main__':
 	unittest.main()
 '''
-
-def given()
+def given():
 	return True
