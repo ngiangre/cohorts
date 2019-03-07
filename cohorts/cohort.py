@@ -371,7 +371,7 @@ class Cohort(object):
 		Parameters
 		----------
 
-		trans: numerical transformation. Default: scikitlearn's StandardScaler
+		trans: numerical transformation. Default: mean/std normalize
 			Indicates how to transform the raw marker values
 		add_small
 			Add small value if any dataframe value is 0 - when log transforming
@@ -461,7 +461,7 @@ class Cohort(object):
 		Parameters
 		----------
 
-		trans: numerical transformation. Default: scikitlearn's StandardScaler
+		trans: numerical transformation. Default: mean/std normalize
 			Indicates how to transform the raw marker values
 		add_small
 			Add small value if any dataframe value is 0 - when log transforming

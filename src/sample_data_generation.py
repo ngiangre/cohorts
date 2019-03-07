@@ -2,10 +2,12 @@
 Generating sample data to try cohorts package
 """
 
+import os
 import numpy as np
 import pandas as pd
 
-out_dir = "~/Github/cohorts/sample_data/"
+file_path = os.path.dirname(os.path.realpath(__file__))
+out_dir = file_path+'/../sample_data/'
 
 #####helper functions#####
 def make_replicates_from_samples(samples,n_replicates=2):
@@ -99,7 +101,7 @@ trt_loc = 25
 
 #####PATIENT COHORT 1#####
 
-out_dir = "~/Github/cohorts/sample_data/patient_cohort_1/"
+out_dir = file_path+'/../sample_data/patient_cohort_1/'
 
 #Make Samples
 n_samples = 10
@@ -122,7 +124,7 @@ df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
 #####PATIENT COHORT 2#####
 
-out_dir = "~/Github/cohorts/sample_data/patient_cohort_2/"
+out_dir = file_path+'/../sample_data/patient_cohort_2/'
 
 #Make Samples
 n_samples = 10
@@ -145,7 +147,7 @@ df_sample_groups.to_csv(out_dir+"df_sample_groups.tsv",sep="\t")
 
 #####PATIENT COHORT 3#####
 
-out_dir = "~/Github/cohorts/sample_data/patient_cohort_3/"
+out_dir = file_path+'/../sample_data/patient_cohort_3/'
 
 #Make Samples
 n_samples = 10
