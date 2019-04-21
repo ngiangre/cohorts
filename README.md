@@ -1,5 +1,8 @@
 # `Cohorts`
 
+![](https://www.google.com/imgres?imgurl=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2017%2F05%2F12%2F19%2F28%2Fperson-from-dots-2307944_960_720.png&imgrefurl=https%3A%2F%2Fpixabay.com%2Fvectors%2Fperson-from-dots-2307944%2F&docid=VXlgcGhMEQ5NSM&tbnid=Pv_DVqrLT9cZtM%3A&vet=10ahUKEwitkZzTsOLhAhXHnuAKHYaEAvQQMwhrKAAwAA..i&w=360&h=720&bih=713&biw=1288&q=personalized%20medicine&ved=0ahUKEwitkZzTsOLhAhXHnuAKHYaEAvQQMwhrKAAwAA&iact=mrc&uact=8)
+
+
 [![Build Status](https://travis-ci.com/ngiangre/cohorts.svg?branch=master)](https://travis-ci.com/ngiangre/cohorts)
 
 ### A python package for standardized and reproducible processing, analysis, and integration of clinical biomarker data
