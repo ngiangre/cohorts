@@ -60,7 +60,7 @@ This software is released under the MIT license, which can be found in LICENSE i
 
 ## Citation
 
-Giangreco, N. Fine, B. Tatonetti, N. cohorts: A Python package for clinical ‘omics data management. _Bioinformatics Note_ (in preparation)
+Giangreco, N. Fine, B. Tatonetti, N. cohorts: A Python package for clinical ‘omics data management. [_bioarxiv_](https://www.biorxiv.org/content/10.1101/626051v1)
 
 <!--
 #### Testing with `nosetests` (for author)
