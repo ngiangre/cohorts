@@ -1,5 +1,7 @@
 # `Cohorts`
 
+[![DOI](https://zenodo.org/badge/130741998.svg)](https://zenodo.org/badge/latestdoi/130741998)
+
 ![](https://marksmanhealthcare.com/wp-content/uploads/2018/09/Health-Economics-of-Personalized-Medicine-.png)
 
 
